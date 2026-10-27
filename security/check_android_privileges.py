@@ -66,7 +66,7 @@ def main():
     print("| Setting | Source value | What needs verification |")
     print("| --- | --- | --- |")
     for title, value, action in rows:
-        print(f"| {title} | \`{value}\` | {action} |")
+        print(f"| {title} | `{value}` | {action} |")
     print()
     if default_match.group(1) == "danger-full-access" and approval_match.group(1) == "never":
         print("**Priority:** The checked-in default is unrestricted agent access without approval. "
