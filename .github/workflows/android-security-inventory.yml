@@ -1,0 +1,41 @@
+name: Android permission security inventory
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'config/cordis.patch.yml'
+      - 'android-app/AndroidManifest.xml'
+      - 'security/**'
+      - 'SECURITY_REVIEW.md'
+      - '.github/workflows/android-security-inventory.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'config/cordis.patch.yml'
+      - 'android-app/AndroidManifest.xml'
+      - 'security/**'
+      - 'SECURITY_REVIEW.md'
+      - '.github/workflows/android-security-inventory.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  permission-inventory:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout source for read-only checks
+        uses: actions/checkout@v4
+      - name: Report declared Android and AI permissions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 security/check_android_privileges.py | tee /tmp/android-security-inventory.md
+          cat /tmp/android-security-inventory.md >> "$GITHUB_STEP_SUMMARY"
+      - name: State limits
+        shell: bash
+        run: |
+          echo "Read-only inventory: no APK build, deployment, signing, elevated device access, or permission change." >> "$GITHUB_STEP_SUMMARY"
